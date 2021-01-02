@@ -6,26 +6,16 @@ class SearchPage extends Component {
   static propTypes = {
     books: PropTypes.array.isRequired,
     changeShelf: PropTypes.func.isRequired,
+    query: PropTypes.string.isRequired,
+    updateBooks: PropTypes.func.isRequired,
   };
   state = {
     query: '',
   };
 
-  updateBooks = (query) => {
-    this.setState(() => ({
-      query,
-    }));
-  };
-
   render() {
-    const { query } = this.state;
-    const { books, changeShelf } = this.props;
-    const showingBooks =
-      query === ''
-        ? books
-        : books.filter((book) =>
-            book.toLowerCase().includes(query.toLowerCase())
-          );
+    // destructuring
+    const { changeShelf, books, query, updateBooks } = this.props;
 
     return (
       <>
@@ -47,13 +37,13 @@ class SearchPage extends Component {
                 type='text'
                 placeholder='Search by title or author'
                 value={query}
-                onChange={(e) => this.updateBooks(e.target.value)}
+                onChange={(e) => updateBooks(e.target.value)}
               />
             </div>
           </div>
           <div className='search-books-results'>
             <ol className='books-grid'>
-              {showingBooks.map((book) => (
+              {books.map((book) => (
                 <li key={book.id}>
                   <div className='book'>
                     <div className='book-top'>
@@ -62,16 +52,17 @@ class SearchPage extends Component {
                         style={{
                           width: 128,
                           height: 193,
-                          backgroundImage: `url(${book.imageLinks.thumbnail})`,
+                          backgroundImage: `url(${
+                            book.imageLinks
+                              ? book.imageLinks.smallThumbnail
+                              : ''
+                          })`,
                         }}
                       />
                       <div className='book-shelf-changer'>
                         <select
                           value={book.shelf}
-                          onChange={
-                            (e) => changeShelf(book, e.target.value)
-                            // console.log(e.target.value, book)
-                          }
+                          onChange={(e) => changeShelf(book, e.target.value)}
                         >
                           <option value='move' disabled>
                             Move to...
@@ -85,8 +76,12 @@ class SearchPage extends Component {
                         </select>
                       </div>
                     </div>
-                    <div className='book-title'>{book.title}</div>
-                    <div className='book-authors'>{book.authors}</div>
+                    <div className='book-title'>
+                      {book.title ? book.title : 'No Title'}
+                    </div>
+                    <div className='book-authors'>
+                      {book.authors ? book.authors : 'No authors'}
+                    </div>
                   </div>
                 </li>
               ))}

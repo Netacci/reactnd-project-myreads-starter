@@ -9,9 +9,6 @@ class BookShelf extends Component {
     onMove: PropTypes.func.isRequired,
     books: PropTypes.array.isRequired,
   };
-  state = {
-    clickRead: true,
-  };
 
   render() {
     const { onMove, books } = this.props;

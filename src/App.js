@@ -15,8 +15,10 @@ class BooksApp extends React.Component {
      */
 
     books: [],
+    query: '',
   };
 
+  // gets books from api
   componentDidMount() {
     BooksAPI.getAll().then((books) => {
       this.setState(() => ({
@@ -25,6 +27,7 @@ class BooksApp extends React.Component {
     });
   }
 
+  // move books between shelves
   handleMove = (book, shelf) => {
     this.setState((currentState) => ({
       books: currentState.books.map((c) => {
@@ -32,6 +35,25 @@ class BooksApp extends React.Component {
 
         return c;
       }),
+    }));
+  };
+
+  // search books
+  searchBooks = (query) => {
+    BooksAPI.search(query).then((result) => {
+      if (result.error) {
+        this.setState({
+          books: [],
+          query: '',
+        });
+      } else {
+        this.setState({
+          books: result,
+        });
+      }
+    });
+    this.setState(() => ({
+      query: query.trim(),
     }));
   };
 
@@ -50,8 +72,9 @@ class BooksApp extends React.Component {
           render={() => (
             <SearchPage
               books={this.state.books}
-              updateBooks={this.updateBooks}
+              updateBooks={this.searchBooks}
               changeShelf={this.handleMove}
+              query={this.state.query}
             />
           )}
         />

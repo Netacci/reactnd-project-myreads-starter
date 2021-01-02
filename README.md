@@ -5,8 +5,6 @@ User can also search for books by Title or Author.
 
 This application was built with React and is the first project for the udacity Nanodegree.
 
-## TL;DR
-
 #Installation
 
 - install all project dependencies with `npm install`

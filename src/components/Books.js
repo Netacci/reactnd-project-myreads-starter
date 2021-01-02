@@ -4,16 +4,17 @@ import { PropTypes } from 'prop-types';
 class Books extends Component {
   static propTypes = {
     shelfTitle: PropTypes.string.isRequired,
+    changeShelf: PropTypes.func.isRequired,
   };
   render() {
-    const { shelfTitle } = this.props;
+    const { shelfTitle, changeShelf, books } = this.props;
     return (
       <>
         <div className='bookshelf'>
           <h2 className='bookshelf-title'>{shelfTitle}</h2>
           <div className='bookshelf-books'>
             <ol className='books-grid'>
-              {this.props.books.map((book) => (
+              {books.map((book) => (
                 <li key={book.id}>
                   <div className='book'>
                     <div className='book-top'>
@@ -29,7 +30,7 @@ class Books extends Component {
                         <select
                           value={book.shelf}
                           onChange={
-                            (e) => this.props.changeShelf(book, e.target.value)
+                            (e) => changeShelf(book, e.target.value)
                             // console.log(e.target.value, book)
                           }
                         >
