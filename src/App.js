@@ -1,83 +1,72 @@
 import React from 'react';
 import * as BooksAPI from './BooksAPI';
-import { Route } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import BookShelf from './components/BookShelf';
 import SearchPage from './components/SearchPage';
 import './App.css';
 
 class BooksApp extends React.Component {
   state = {
-    /**
-     * TODO: Instead of using this state variable to keep track of which page
-     * we're on, use the URL in the browser's address bar. This will ensure that
-     * users can use the browser's back and forward buttons to navigate between
-     * pages, as well as provide a good URL they can bookmark and share.
-     */
-
     books: [],
     query: '',
   };
 
   // gets books from api
-  componentDidMount() {
-    BooksAPI.getAll().then((books) => {
-      this.setState(() => ({
-        books,
-      }));
+  async componentDidMount() {
+    const books = await BooksAPI.getAll();
+    this.setState({
+      books,
     });
   }
 
-  // move books between shelves
+  // move books between shelves and update backend
   handleMove = (book, shelf) => {
-    this.setState((currentState) => ({
-      books: currentState.books.map((c) => {
-        if (c.id === book.id) c.shelf = shelf;
+    BooksAPI.update(book, shelf).then(() => {
+      this.setState((currentState) => ({
+        books: currentState.books.map((c) => {
+          if (c.id === book.id) c.shelf = shelf;
 
-        return c;
-      }),
-    }));
+          return c;
+        }),
+      }));
+    });
   };
 
   // search books
   searchBooks = (query) => {
-    BooksAPI.search(query).then((result) => {
-      if (result.error) {
+    BooksAPI.search(query).then((response) => {
+      if (query === '' || response.error) {
         this.setState({
           books: [],
           query: '',
         });
       } else {
         this.setState({
-          books: result,
+          books: response,
         });
       }
     });
     this.setState(() => ({
-      query: query.trim(),
+      query,
     }));
   };
 
   render() {
     return (
       <div className='app'>
-        <Route
-          exact
-          path='/'
-          render={() => (
+        <Switch>
+          <Route exact path='/'>
             <BookShelf books={this.state.books} onMove={this.handleMove} />
-          )}
-        />
-        <Route
-          path='/search'
-          render={() => (
+          </Route>
+          <Route path='/search'>
             <SearchPage
               books={this.state.books}
               updateBooks={this.searchBooks}
               changeShelf={this.handleMove}
               query={this.state.query}
             />
-          )}
-        />
+          </Route>
+        </Switch>
       </div>
     );
   }

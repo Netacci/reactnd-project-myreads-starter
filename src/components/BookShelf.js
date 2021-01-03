@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Books from './Books';
 import Header from './Header';
+import { Shelves } from './../util/Shelves';
 
 class BookShelf extends Component {
   static propTypes = {
@@ -12,11 +13,6 @@ class BookShelf extends Component {
 
   render() {
     const { onMove, books } = this.props;
-    const currentlyReading = books.filter(
-      (book) => book.shelf === 'currentlyReading'
-    );
-    const wantToRead = books.filter((book) => book.shelf === 'wantToRead');
-    const read = books.filter((book) => book.shelf === 'read');
 
     return (
       <>
@@ -24,19 +20,14 @@ class BookShelf extends Component {
           <div className='list-books-content'>
             <Header />
             <div>
-              <Books
-                books={currentlyReading}
-                shelfTitle='Currently Reading'
-                changeShelf={onMove}
-              />
-
-              <Books
-                books={wantToRead}
-                shelfTitle='Want to read'
-                changeShelf={onMove}
-              />
-
-              <Books books={read} shelfTitle='Read' changeShelf={onMove} />
+              {Shelves.map((shelf) => (
+                <Books
+                  key={shelf.id}
+                  books={books.filter((book) => book.shelf === shelf.id)}
+                  shelfTitle={shelf.title}
+                  changeShelf={onMove}
+                />
+              ))}
             </div>
           </div>
           <Link to='/search' className='open-search'>

@@ -9,9 +9,6 @@ class SearchPage extends Component {
     query: PropTypes.string.isRequired,
     updateBooks: PropTypes.func.isRequired,
   };
-  state = {
-    query: '',
-  };
 
   render() {
     // destructuring
@@ -25,19 +22,11 @@ class SearchPage extends Component {
               Close
             </Link>
             <div className='search-books-input-wrapper'>
-              {/*
-                  NOTES: The search from BooksAPI is limited to a particular set of search terms.
-                  You can find these search terms here:
-                  https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
-
-                  However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-                  you don't find a specific author or title. Every search is limited by search terms.
-                */}
               <input
                 type='text'
                 placeholder='Search by title or author'
                 value={query}
-                onChange={(e) => updateBooks(e.target.value)}
+                onChange={(e) => updateBooks(e.target.value.toLowerCase())}
               />
             </div>
           </div>
@@ -61,7 +50,9 @@ class SearchPage extends Component {
                       />
                       <div className='book-shelf-changer'>
                         <select
-                          value={book.shelf}
+                          value={
+                            book.shelf ? book.shelf : (book.shelf = 'none')
+                          }
                           onChange={(e) => changeShelf(book, e.target.value)}
                         >
                           <option value='move' disabled>
@@ -80,7 +71,7 @@ class SearchPage extends Component {
                       {book.title ? book.title : 'No Title'}
                     </div>
                     <div className='book-authors'>
-                      {book.authors ? book.authors : 'No authors'}
+                      {book.authors ? book.authors.join(', ') : 'No authors'}
                     </div>
                   </div>
                 </li>

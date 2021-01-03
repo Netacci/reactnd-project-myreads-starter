@@ -5,6 +5,7 @@ class Books extends Component {
   static propTypes = {
     shelfTitle: PropTypes.string.isRequired,
     changeShelf: PropTypes.func.isRequired,
+    books: PropTypes.array.isRequired,
   };
   render() {
     const { shelfTitle, changeShelf, books } = this.props;
