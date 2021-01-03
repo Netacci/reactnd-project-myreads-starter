@@ -8,7 +8,6 @@ import './App.css';
 class BooksApp extends React.Component {
   state = {
     books: [],
-    query: '',
   };
 
   // gets books from api
@@ -32,25 +31,6 @@ class BooksApp extends React.Component {
     });
   };
 
-  // search books
-  searchBooks = (query) => {
-    BooksAPI.search(query).then((response) => {
-      if (query === '' || response.error) {
-        this.setState({
-          books: [],
-          query: '',
-        });
-      } else {
-        this.setState({
-          books: response,
-        });
-      }
-    });
-    this.setState(() => ({
-      query,
-    }));
-  };
-
   render() {
     return (
       <div className='app'>
@@ -59,12 +39,7 @@ class BooksApp extends React.Component {
             <BookShelf books={this.state.books} onMove={this.handleMove} />
           </Route>
           <Route path='/search'>
-            <SearchPage
-              books={this.state.books}
-              updateBooks={this.searchBooks}
-              changeShelf={this.handleMove}
-              query={this.state.query}
-            />
+            <SearchPage onMove={this.handleMove} allBooks={this.state.books} />
           </Route>
         </Switch>
       </div>
